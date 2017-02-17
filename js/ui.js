@@ -1,6 +1,24 @@
 // 界面管理类
 window.UI = {};
 
+// 按钮对应css类
+UI.cls_obj = {
+    '不出':'pass',
+    '提示':'tips',
+    '开始':'start',
+    '出牌':'play',
+    '重选':'reselect',
+    '不叫':'gamble0',
+    '3分':'gamble3',
+    '2分':'gamble2',
+    '1分':'gamble1'
+}
+
+UI.bind_event = function() {
+    $('#myPokers').delegate('.poker', 'click', this.on_event_click_poker);
+    //$('#myButtons').delegate('.button', 'click', this.evtButton);
+}
+
 /**
  * [展示底牌]
  * @return {[type]} [description]
@@ -35,6 +53,11 @@ UI.show_users = function(users, myid) {
     }
 }
 
+/**
+ * [显示我的扑克牌]
+ * @param  {[type]} pokers [description]
+ * @return {[type]}        [description]
+ */
 UI.show_my_pokers = function(pokers) {
     $('#myPokers').empty();
 
@@ -47,10 +70,140 @@ UI.show_my_pokers = function(pokers) {
     right_margin = Math.floor((850 - (interval * (len - 1) + len)) / 2);
 
     pokers.forEach(function(poker, i) {
-        console.log(poker, i);
         $node = UI.gen_poker_DOM(poker);
         $node.css({zIndex: (100 - i), right: right_margin + interval * i}).appendTo('#myPokers');
     });
+}
+
+/**
+ * [显示操作按钮]
+ * @return {[type]} [description]
+ */
+UI.init_my_buttons = function() {
+    var buttons = ['不出','重选','提示','出牌'];
+    var $node;
+    buttons.forEach(function(text) {
+        $node = UI.gen_button_DOM(text);
+        $node.appendTo('#myButtons');
+    });
+}
+
+/**
+ * [响应点击扑克时间]
+ * @param  {[type]} e [description]
+ * @return {[type]}   [description]
+ */
+UI.on_event_click_poker = function(e) {
+    var $t = $(this),
+        pokers = [],
+        is_selected = $t.attr('selected');
+
+    pokers.push(parseInt($t.attr('poker'), 10));
+    if(is_selected)
+    {
+        // unselect it
+        UI.select_pokers(pokers, false);
+    }
+    else
+    {
+        // select it
+        UI.select_pokers(pokers);
+    }
+}
+
+/**
+ * [获取已选扑克牌]
+ * @return {[type]} [description]
+ */
+UI.get_selected_pokers = function() {
+    var back = [],
+        $nodes = $('#myPokers > .poker[selected="true"]');
+
+    $nodes.each(function(index) {
+        back.push(parseInt($nodes.eq(index).attr('poker'), 10));
+    });
+
+    return back;
+}
+
+/**
+ * [选择或者弃选卡牌]
+ * @param  {[type]}  pokers    [description]
+ * @param  {Boolean} is_select [description]
+ * @return {[type]}            [description]
+ */
+UI.select_pokers = function(pokers, is_select) {
+    is_select = is_select == null ? true : is_select;
+    pokers.forEach(function(poker) {
+        var selector = '.poker[poker="' + poker + '"]';
+        if(is_select)
+        {
+            $(selector).css({bottom:20}).attr('selected', true);
+        }
+        else
+        {
+            $(selector).css({bottom:0}).removeAttr('selected');
+        }
+    });
+}
+
+UI.play_pokers = function() {
+    var pokers = this.get_selected_pokers();
+
+    if(pokers.length === 0) {
+        this.show_tips('请选择要出的牌');
+        return;
+    }
+
+    /*
+    if(!AI.isRight(pokers, enemy_poker)) {
+        this.show_tips('不符合出牌规则');
+        return;
+    }
+    */
+
+    //过滤出来已经出的牌，然后重新绘制用户牌面
+    var pokers_str = pokers.join(',');
+    I.pokers = I.pokers.filter(function(poker) {
+        return pokers_str.indexOf(poker) === -1;
+    });
+
+    //更新牌数
+    this.update_poker_num(I.pokers.length, I.index);
+
+    //出牌
+    //this.do出牌(pokers, '#myProfileContent');
+
+    //this.updateMe
+    this.show_my_pokers(I.pokers);
+    //this.setNextUser();
+    //this.buttonHide();
+}
+
+/**
+ * [激活或者禁用按钮]
+ * @param  {Boolean} is_activate [description]
+ * @return {Boolean}             [description]
+ */
+UI.is_activate_button = function(is_activate) {
+    if(is_activate)
+    {
+        $('#myButtons .button').removeClass('disabled');
+    }
+    else
+    {
+        $('#myButtons .button').addClass('disabled');
+    }
+}
+
+/**
+ * [生成按钮DOM]
+ * @param  {[type]} text [description]
+ * @return {[type]}      [description]
+ */
+UI.gen_button_DOM = function(text) {
+    var cls = UI.cls_obj[text];
+    return $('<div class="button" title="' + text + '"><div class="text ' + cls + '"><span></span><span></span></div></div>');
 }
 
 /**
