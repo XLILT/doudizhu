@@ -16,7 +16,7 @@ UI.cls_obj = {
 
 UI.bind_event = function() {
     $('#myPokers').delegate('.poker', 'click', this.on_event_click_poker);
-    //$('#myButtons').delegate('.button', 'click', this.evtButton);
+    $('#myButtons').delegate('.button', 'click', this.on_event_click_button);
 }
 
 /**
@@ -111,6 +111,112 @@ UI.on_event_click_poker = function(e) {
     }
 }
 
+UI.on_event_click_button = function(e) {    
+    var button_title = this.title;
+    
+    if (button_title ===  "出牌") 
+    {        
+        UI.on_button_play();
+    }
+    else if (button_title ===  "不出") 
+    {
+        UI.on_button_not_play();
+    }
+    else if (button_title ===  "重选") 
+    {
+        UI.on_button_reselect();
+    }
+    else if (button_title ===  "提示") 
+    {
+        UI.on_button_tips();
+    }
+}
+
+UI.on_button_not_play = function() {
+
+}
+
+UI.on_button_reselect = function() {
+
+}
+
+UI.on_button_tips = function() {
+
+}
+
+UI.on_button_play = function() {
+
+    var pokers = this.get_selected_pokers();
+
+    if(pokers.length === 0) {        
+        this.show_tips('请选择要出的牌');
+        return;
+    }
+    
+    /*
+    if(!AI.isRight(cards, curPoker)){
+        this.showTips('不符合出牌规则');
+        return;
+    }
+    */
+
+    //过滤出来已经出的牌，然后重新绘制用户牌面
+    pokers.forEach(function(poker) {
+        var index = I.pokers.indexOf(poker);
+        if(index > -1) {
+            I.pokers.splice(index, 1);
+        }
+    });
+
+    // 重绘我的扑克牌
+    this.show_my_pokers(I.pokers);
+
+    
+    // 更新牌数量
+    this.update_poker_num(I.pokers.length, I.index);
+    
+    // 展示已经打出的牌
+    this.show_played_pokers(pokers, '#myProfileContent');
+
+    /*    
+    //出牌
+    this.do出牌(cards,'#myProfileContent');
+    //this.updateMe
+    this.showMePoker(I.pokers);
+    this.setNextUser();
+    this.buttonHide();    
+    */
+}
+
+UI.show_played_pokers = function(pokers, id) {
+    $('.pokerContainer').empty();
+    
+    var len;    
+    if(len = pokers.length) {
+        if(id.indexOf('#') !== 0) {
+            id = '#' + id;
+        }
+
+        var temp = 0,
+            obj,
+            rOrL = 'left',
+            every = 25;
+        if(id === '#myProfileContent') {
+            temp = 350 - ((len-1) * every + 84) / 2;
+            temp = temp < 0 ? 0 : temp;
+        }else if(id==='#rightUserContent') {
+            rOrL = 'right';
+        }
+        
+        pokers.forEach(function(poker, index) {
+            len++;
+            obj = {zIndex:100 + len};
+            obj[rOrL] = index * every + temp
+            UI.gen_poker_DOM(poker, false).css(obj).appendTo(id);
+        });
+    }
+}
+
 /**
  * [获取已选扑克牌]
  * @return {[type]} [description]
@@ -147,37 +253,17 @@ UI.select_pokers = function(pokers, is_select) {
     });
 }
 
-UI.play_pokers = function() {
-    var pokers = this.get_selected_pokers();
+/**
+ * 显示提示
+ * @param  {[type]} tips [description]
+ * @return {[type]}      [description]
+ */
+UI.show_tips = function(tips) {
+    var $t = $('#tips').html(tips).css({visibility: 'visible'});
 
-    if(pokers.length === 0) {
-        this.show_tips('请选择要出的牌');
-        return;
-    }
-
-    /*
-    if(!AI.isRight(pokers, enemy_poker)) {
-        this.show_tips('不符合出牌规则');
-        return;
-    }
-    */
-
-    //过滤出来已经出的牌，然后重新绘制用户牌面
-    var pokers_str = pokers.join(',');
-    I.pokers = I.pokers.filter(function(poker) {
-        return pokers_str.indexOf(poker) === -1;
-    });
-
-    //更新牌数
-    this.update_poker_num(I.pokers.length, I.index);
-
-    //出牌
-    //this.do出牌(pokers, '#myProfileContent');
-
-    //this.updateMe
-    this.show_my_pokers(I.pokers);
-    //this.setNextUser();
-    //this.buttonHide();
+    setTimeout(function() {
+        $t.css({visibility: 'hidden'});        
+    }, 5E3);
 }
 
 /**
@@ -259,6 +345,17 @@ UI.gen_num_html = function(num) {
     num = num.slice(-2);
     num = num.split('');
     return '<div class="goldNum'+num[0]+'"></div><div class="goldNum'+num[1]+'"></div>';
+}
+
+/**
+ * 更新扑克数量
+ * @param {Object} num
+ * @param {Object} index
+ */
+UI.update_poker_num = function(num, index) {    
+    var num_html = this.gen_num_html(num);
+    console.log(num_html);
+    $('#userID' + index + ' .pokerNum').html(num_html);
 }
 
 /**

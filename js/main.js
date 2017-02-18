@@ -22,15 +22,12 @@
 
     var my_id = 0;
     UI.show_users(users, my_id);
-    UI.show_my_pokers(users[my_id].pokers);
+    window.I = users[my_id];
+    I.index = my_id;
+    UI.show_my_pokers(I.pokers);
 
     UI.init_my_buttons();
 
     UI.bind_event();
-
-    alert("出牌");
-
-    users[my_id].pokers.pop();
-    UI.show_users(users, my_id);
 
 })(window);
