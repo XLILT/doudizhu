@@ -29,4 +29,6 @@
     UI.init_my_buttons();
 
     UI.bind_event();
+
+    //console.log(poker_ruler.could_play([103, 104, 105, 106, 107], [203, 204, 205, 206, 207]));
 })(window);

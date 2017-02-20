@@ -304,3 +304,75 @@ PokerRule.prototype.get_pokers_type_and_min_value = function(pokers) {
             return false;
     }
 }
+
+/**
+ * [是否符合出牌规则]
+ * @param  {[type]} playing_pokers [将打出的牌组]
+ * @param  {[type]} played_pokers  [需要压的牌组，若无需压制则为null]
+ * @return {[type]}                [true-符合出牌规则, false-不符合出牌规则]
+ */
+PokerRule.prototype.could_play = function(playing_pokers, played_pokers) {
+    var playing_pokers_type = this.get_pokers_type_and_min_value(playing_pokers);
+    if(playing_pokers_type === false) {
+        return false;
+    }
+
+    if(played_pokers === null || played_pokers === undefined) {
+        return true;
+    }
+
+    var played_pokers_type = this.get_pokers_type_and_min_value(played_pokers);
+    if(played_pokers_type === false) {
+        return false;
+    }
+
+    if(playing_pokers_type.type === this.poker_group_type["joker_boom"]) {
+        if(played_pokers_type.type === this.poker_group_type["joker_boom"]) {
+            return true;
+        }
+        else {
+            return false;   //impossible
+        }
+        
+    }
+    else if(playing_pokers_type.type === this.poker_group_type["quadruple_boom"]) {
+        if (played_pokers_type.type === this.poker_group_type["joker_boom"]) {
+            return false;
+        }
+        else if(played_pokers_type.type === this.poker_group_type["quadruple_boom"]) {
+            if(playing_pokers_type.value > played_pokers_type.value) {
+                return true;
+            }
+            else {
+                return false;
+            }
+        }
+        else {
+            return true;
+        }
+    }
+    else {
+        if (played_pokers_type.type === this.poker_group_type["joker_boom"]
+            || played_pokers_type.type === this.poker_group_type["quadruple_boom"]) {
+            return false;
+        }
+        else {
+            if(playing_pokers.length !== played_pokers.length) {
+                return false;
+            }
+
+            if(playing_pokers_type.type !== played_pokers_type.type) {
+                return false;
+            }
+
+            if(playing_pokers_type.value > played_pokers_type.value) {
+                return true;
+            }
+            else {
+                return false;
+            }
+        }
+    }
+
+    return true;
+}
