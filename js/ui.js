@@ -111,22 +111,22 @@ UI.on_event_click_poker = function(e) {
     }
 }
 
-UI.on_event_click_button = function(e) {    
+UI.on_event_click_button = function(e) {
     var button_title = this.title;
-    
-    if (button_title ===  "出牌") 
-    {        
+
+    if (button_title ===  "出牌")
+    {
         UI.on_button_play();
     }
-    else if (button_title ===  "不出") 
+    else if (button_title ===  "不出")
     {
         UI.on_button_not_play();
     }
-    else if (button_title ===  "重选") 
+    else if (button_title ===  "重选")
     {
         UI.on_button_reselect();
     }
-    else if (button_title ===  "提示") 
+    else if (button_title ===  "提示")
     {
         UI.on_button_tips();
     }
@@ -137,7 +137,7 @@ UI.on_button_not_play = function() {
 }
 
 UI.on_button_reselect = function() {
-
+    $('#myPokers > .poker[selected="true"]').css({bottom:0}).removeAttr('selected');
 }
 
 UI.on_button_tips = function() {
@@ -148,11 +148,11 @@ UI.on_button_play = function() {
 
     var pokers = this.get_selected_pokers();
 
-    if(pokers.length === 0) {        
+    if(pokers.length === 0) {
         this.show_tips('请选择要出的牌');
         return;
     }
-    
+
     /*
     if(!AI.isRight(cards, curPoker)){
         this.showTips('不符合出牌规则');
@@ -171,27 +171,30 @@ UI.on_button_play = function() {
     // 重绘我的扑克牌
     this.show_my_pokers(I.pokers);
 
-    
+
     // 更新牌数量
     this.update_poker_num(I.pokers.length, I.index);
-    
+
     // 展示已经打出的牌
     this.show_played_pokers(pokers, '#myProfileContent');
 
-    /*    
+    // 失效按钮
+    this.activate_button(false);
+
+    /*
     //出牌
     this.do出牌(cards,'#myProfileContent');
     //this.updateMe
     this.showMePoker(I.pokers);
     this.setNextUser();
-    this.buttonHide();    
+    this.buttonHide();
     */
 }
 
 UI.show_played_pokers = function(pokers, id) {
     $('.pokerContainer').empty();
-    
-    var len;    
+
+    var len;
     if(len = pokers.length) {
         if(id.indexOf('#') !== 0) {
             id = '#' + id;
@@ -207,7 +210,7 @@ UI.show_played_pokers = function(pokers, id) {
         }else if(id==='#rightUserContent') {
             rOrL = 'right';
         }
-        
+
         pokers.forEach(function(poker, index) {
             len++;
             obj = {zIndex:100 + len};
@@ -262,7 +265,7 @@ UI.show_tips = function(tips) {
     var $t = $('#tips').html(tips).css({visibility: 'visible'});
 
     setTimeout(function() {
-        $t.css({visibility: 'hidden'});        
+        $t.css({visibility: 'hidden'});
     }, 5E3);
 }
 
@@ -271,7 +274,7 @@ UI.show_tips = function(tips) {
  * @param  {Boolean} is_activate [description]
  * @return {Boolean}             [description]
  */
-UI.is_activate_button = function(is_activate) {
+UI.activate_button = function(is_activate) {
     if(is_activate)
     {
         $('#myButtons .button').removeClass('disabled');
@@ -352,9 +355,8 @@ UI.gen_num_html = function(num) {
  * @param {Object} num
  * @param {Object} index
  */
-UI.update_poker_num = function(num, index) {    
+UI.update_poker_num = function(num, index) {
     var num_html = this.gen_num_html(num);
-    console.log(num_html);
     $('#userID' + index + ' .pokerNum').html(num_html);
 }
 
