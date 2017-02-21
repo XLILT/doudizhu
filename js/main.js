@@ -52,5 +52,4 @@
     UI.init_my_buttons();
 
     UI.bind_event();
-
 })(window);

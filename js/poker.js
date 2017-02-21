@@ -328,7 +328,7 @@ PokerRule.prototype.could_play = function(playing_pokers, played_pokers) {
         return false;
     }
 
-    if(played_pokers === null || played_pokers === undefined) {
+    if(played_pokers === null || played_pokers === undefined || played_pokers.length === 0) {
         return true;
     }
 

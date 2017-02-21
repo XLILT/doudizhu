@@ -133,7 +133,10 @@ UI.on_event_click_button = function(e) {
 }
 
 UI.on_button_not_play = function() {
+    game.play_pokers(I.index, []);
 
+    // 失效按钮
+    this.activate_button(false);
 }
 
 UI.on_button_reselect = function() {
@@ -153,24 +156,23 @@ UI.on_button_play = function() {
         return;
     }
 
-    /*
-    if(!AI.isRight(cards, curPoker)){
-        this.showTips('不符合出牌规则');
+    if(game.play_pokers(I.index, pokers) === false) {
+        this.show_tips('不符合出牌规则');
         return;
     }
-    */
 
-    //过滤出来已经出的牌，然后重新绘制用户牌面
+    //过滤出来已经出的牌，然后重新绘制用户牌面，已由game对象操作完成
+    /*
     pokers.forEach(function(poker) {
         var index = I.pokers.indexOf(poker);
         if(index > -1) {
             I.pokers.splice(index, 1);
         }
     });
+    */
 
     // 重绘我的扑克牌
     this.show_my_pokers(I.pokers);
-
 
     // 更新牌数量
     this.update_poker_num(I.pokers.length, I.index);
@@ -377,3 +379,19 @@ UI.gen_poker_DOM = function(poker, is_small) {
     //console.log($node);
     return $node;
 }
+
+/**
+ * [显示游戏结果]
+ * @param  {Boolean} is_landlord_win [description]
+ * @return {[type]}                  [description]
+ */
+UI.on_game_over = function(is_landlord_win) {
+    $(".main").css({opacity: 0.5});
+
+    if(is_landlord_win) {
+        $(".game-over .win").css({display: "block"});
+    }
+    else {
+        $(".game-over .lose").css({display: "block"});
+    }
+};

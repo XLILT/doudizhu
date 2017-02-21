@@ -490,3 +490,29 @@ body{ background:#ccc;font-family: 'Microsoft Yahei','"Microsoft Sans Serif"'}
 		span:first-child{background-position: -158px -67px;}
 	}
 }
+
+/** 游戏结果展示 */
+.game-over {
+
+	position: absolute;
+	top: 160;
+	left: 700;
+	margin: 0 auto;
+	z-index: 100;
+
+	.win {
+		width: 477;
+		height: 291;
+		background: url(../img/win.png) no-repeat center center;
+
+		display: none;
+	}
+
+	.lose {
+		width: 460;
+		height: 276;
+		background: url(../img/lose.png) no-repeat center center;
+
+		display: none;
+	}
+}
