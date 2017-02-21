@@ -1,7 +1,5 @@
 (function(window){
-    var dipai = [103, 104, 105];
-    UI.show_dipai(dipai);
-
+    /*
     users = [
     {
         name: "user0",
@@ -27,8 +25,32 @@
     UI.show_my_pokers(I.pokers);
 
     UI.init_my_buttons();
+    */
+
+    for (var i = 0; i < 3; i++) {
+        var player = new Player;
+        player.name = "user" + i;
+
+        game.join_player(i, player);
+    }
+
+    game.start();
+
+    var my_id = 0;
+    game.get_landlord(my_id);
+
+
+    UI.show_landlord_pokers(game.landlord_pokers);
+
+    UI.show_users(game.players, my_id);
+
+    window.I = game.players[my_id];
+    I.index = my_id;
+
+    UI.show_my_pokers(I.pokers);
+
+    UI.init_my_buttons();
 
     UI.bind_event();
 
-    //console.log(poker_ruler.could_play([103, 104, 105, 106, 107], [203, 204, 205, 206, 207]));
 })(window);

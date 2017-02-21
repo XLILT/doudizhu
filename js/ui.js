@@ -23,8 +23,8 @@ UI.bind_event = function() {
  * [展示底牌]
  * @return {[type]} [description]
  */
-UI.show_dipai = function(dipai) {
-    dipai.forEach(function(a) {
+UI.show_landlord_pokers = function(landlord_pokers) {
+    landlord_pokers.forEach(function(a) {
         UI.gen_poker_DOM(a, !0).appendTo('#dipai');
     });
 }
@@ -306,7 +306,7 @@ UI.show_one_user = function(user, index, id){
     var len = user.pokers.length,
         name = user.name,
         sex = user.sex,
-        is_dizhu = user.is_dizhu,
+        is_dizhu = user.is_landlord,
         $node;
 
     $node = UI.gen_user_DOM(is_dizhu, name, index, sex, len);

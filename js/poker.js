@@ -19,6 +19,17 @@ Poker.shape = {
     5:''            //大王
 };
 
+Poker.gen_random_all_pokers = function() {
+    var pokers = Poker.all_pokers,
+        temp = [];
+
+    while(pokers.length){
+        temp.push(pokers.splice(Math.random() * (pokers.length), 1)[0]);
+    }
+
+    return temp;
+};
+
 /**
  * [获取牌面花色]
  * @param  {[type]} poker [description]
@@ -333,7 +344,7 @@ PokerRule.prototype.could_play = function(playing_pokers, played_pokers) {
         else {
             return false;   //impossible
         }
-        
+
     }
     else if(playing_pokers_type.type === this.poker_group_type["quadruple_boom"]) {
         if (played_pokers_type.type === this.poker_group_type["joker_boom"]) {
