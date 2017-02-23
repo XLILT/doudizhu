@@ -239,6 +239,8 @@ Game.prototype.play_pokers = function(index, pokers) {
             this.last_player_index = this.playing_index;
             this.last_pokers = pokers;
 
+            this.players[index].pokers = final_pokers;
+
             // 更新牌数
             UI.update_poker_num(this.players[index].pokers.length, index);
 
@@ -253,8 +255,6 @@ Game.prototype.play_pokers = function(index, pokers) {
                 UI.activate_button(false);
             }
         }
-
-        this.players[index].pokers = final_pokers;
     }
     else {
         return false;
