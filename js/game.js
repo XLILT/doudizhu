@@ -216,15 +216,17 @@ Game.prototype.play_pokers = function(index, pokers) {
     var final_pokers = this.players[index].pokers.concat(),
         pokers_existing = true;
 
-    pokers.forEach(function(poker) {
-        var poker_index = final_pokers.indexOf(poker);
-        if(poker_index > -1) {
-            final_pokers.splice(poker_index, 1);
-        }
-        else {
-            pokers_existing = false;
-        }
-    });
+    if(pokers instanceof Array && pokers.length > 0) {
+        pokers.forEach(function(poker) {
+            var poker_index = final_pokers.indexOf(poker);
+            if(poker_index > -1) {
+                final_pokers.splice(poker_index, 1);
+            }
+            else {
+                pokers_existing = false;
+            }
+        });
+    }
 
     if(pokers_existing) {
         if(pokers.length > 0) {
