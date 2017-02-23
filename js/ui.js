@@ -14,6 +14,9 @@ UI.cls_obj = {
     '1分':'gamble1'
 }
 
+UI.timer = null;
+UI.max_one_turn_seconds = 30;
+
 UI.bind_event = function() {
     $('#myPokers').delegate('.poker', 'click', this.on_event_click_poker);
     $('#myButtons').delegate('.button', 'click', this.on_event_click_button);
@@ -86,6 +89,8 @@ UI.init_my_buttons = function() {
         $node = UI.gen_button_DOM(text);
         $node.appendTo('#myButtons');
     });
+
+    UI.activate_button(false);
 }
 
 /**
@@ -161,18 +166,6 @@ UI.on_button_play = function() {
         return;
     }
 
-    // 重绘我的扑克牌
-    this.show_my_pokers(I.pokers);
-
-    // 更新牌数量
-    this.update_poker_num(I.pokers.length, I.index);
-
-    // 展示已经打出的牌
-    this.show_played_pokers(pokers, '#myProfileContent');
-
-    // 失效按钮
-    this.activate_button(false);
-
     /*
     //出牌
     this.do出牌(cards,'#myProfileContent');
@@ -210,6 +203,31 @@ UI.show_played_pokers = function(pokers, id) {
             UI.gen_poker_DOM(poker, false).css(obj).appendTo(id);
         });
     }
+}
+
+UI.on_user_turn = function(user_index) {
+    $('.hightlight').removeClass('hightlight');
+    UI.clear_timer();
+
+    var $node = $('#userID'+user_index).addClass('hightlight').find('.clock').show().find('p').html(UI.max_one_turn_seconds);
+    UI.timer = setInterval(function() {
+        var time = +$node.html();
+        time--;
+        if(time === 0){
+
+            game.on_time_out();
+
+            UI.clear_timer();
+            return;
+        }
+
+        $node.html(time);
+    }, 1000);
+}
+
+UI.clear_timer = function() {
+    $('.clock').hide();
+    UI.timer && clearInterval(UI.timer);
 }
 
 /**
@@ -326,7 +344,7 @@ UI.gen_user_DOM = function(is_dizhu, name, user_index, sex, num) {
     var id = 'userID' + user_index;
     var $node = $('<div id="' + id + '" class="user"></div>');
     var num_html = UI.gen_num_html(num);
-    $node.html('<div class="clock"><p>10</p></div><p class="name">' + name + '</p><div class="img"><div class="' + sex + '"></div></div><div class="pokerNum">' + num_html + '</div>');
+    $node.html('<div class="clock"><p>30</p></div><p class="name">' + name + '</p><div class="img"><div class="' + sex + '"></div></div><div class="pokerNum">' + num_html + '</div>');
     return $node;
 }
 

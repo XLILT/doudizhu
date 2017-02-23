@@ -43,6 +43,8 @@ Player.prototype.add_pokers = function(add_pokers) {
 };
 
 Player.prototype.on_play = function(index) {
+    UI.on_user_turn(index);
+
     if(index === I.index) {
         UI.activate_button(true);
     }
@@ -54,17 +56,7 @@ Player.prototype.on_play = function(index) {
             }
 
             game.play_pokers(index, selected_pokers);
-
-            // UI
-            if(selected_pokers.length > 0) {
-                // 更新牌数
-                UI.update_poker_num(game.players[index].pokers.length, index);
-
-                // 展示已经打出的牌
-                UI.show_played_pokers(selected_pokers, player.pokers_show_dom_id);
-            }
-
-        }, 1000, index, this);
+        }, 3000, index, this);
     }
 };
 
@@ -87,6 +79,8 @@ Game.prototype.players = [null, null, null];
  * @type {Number}
  */
 Game.prototype.player_count = 0;
+
+Game.prototype.landlord_index = -1;
 
 /**
  * [地主牌（底牌）]
@@ -190,12 +184,16 @@ Game.prototype.start = function() {
 Game.prototype.get_landlord = function(index) {
     if(index >= 0 && index <= 2) {
         var landlord = this.players[index];
+
+        this.landlord_index = index;
         landlord.is_landlord = true;
         this.playing_index = index;
 
         if(this.landlord_pokers.length === 3) {
             landlord.add_pokers(this.landlord_pokers);
         }
+
+        UI.show_landlord_pokers(this.landlord_pokers);
     }
     else {
         return false;
@@ -240,6 +238,20 @@ Game.prototype.play_pokers = function(index, pokers) {
 
             this.last_player_index = this.playing_index;
             this.last_pokers = pokers;
+
+            // 更新牌数
+            UI.update_poker_num(this.players[index].pokers.length, index);
+
+            // 展示已经打出的牌
+            UI.show_played_pokers(pokers, this.players[index].pokers_show_dom_id);
+
+            if(index === I.index) {
+                // 重绘我的扑克牌
+                UI.show_my_pokers(I.pokers);
+
+                // 失效按钮
+                UI.activate_button(false);
+            }
         }
 
         this.players[index].pokers = final_pokers;
@@ -263,6 +275,28 @@ Game.prototype.play_pokers = function(index, pokers) {
     return true;
 };
 
+/**
+ * [出牌时间超时]
+ * @return {[type]} [description]
+ */
+Game.prototype.on_time_out = function() {
+    if(this.last_player_index === -1 || this.last_player_index === this.playing_index) {
+        var sorted_pokers = Poker.sort(this.players[this.playing_index].pokers);
+        var selected_pokers = [];
+        selected_pokers.push(sorted_pokers[0]);
+
+        this.play_pokers(this.playing_index, selected_pokers);
+    }
+    else {
+        this.play_pokers(this.playing_index, []);
+    }
+}
+
+/**
+ * [游戏结束]
+ * @param  {[type]} winner_index [description]
+ * @return {[type]}              [description]
+ */
 Game.prototype.on_game_over = function(winner_index) {
     var is_landlord_win = this.players[winner_index].is_landlord;
     setTimeout(function(is_landlord_win) {

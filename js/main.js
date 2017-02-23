@@ -57,11 +57,6 @@
     }
 
     game.start();
-    game.get_landlord(my_id);
-
-    UI.show_landlord_pokers(game.landlord_pokers);
-
-    UI.show_users(game.players, my_id);
 
     window.I = game.players[my_id];
     I.index = my_id;
@@ -71,4 +66,14 @@
     UI.init_my_buttons();
 
     UI.bind_event();
+
+    game.get_landlord(my_id);
+
+    UI.show_users(game.players, my_id);
+
+    UI.show_my_pokers(I.pokers);
+    UI.update_poker_num(I.pokers.length, I.index);
+
+    game.players[game.landlord_index].on_play(game.landlord_index);
+
 })(window);
