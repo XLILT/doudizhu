@@ -161,16 +161,6 @@ UI.on_button_play = function() {
         return;
     }
 
-    //过滤出来已经出的牌，然后重新绘制用户牌面，已由game对象操作完成
-    /*
-    pokers.forEach(function(poker) {
-        var index = I.pokers.indexOf(poker);
-        if(index > -1) {
-            I.pokers.splice(index, 1);
-        }
-    });
-    */
-
     // 重绘我的扑克牌
     this.show_my_pokers(I.pokers);
 
@@ -209,7 +199,7 @@ UI.show_played_pokers = function(pokers, id) {
         if(id === '#myProfileContent') {
             temp = 350 - ((len-1) * every + 84) / 2;
             temp = temp < 0 ? 0 : temp;
-        }else if(id==='#rightUserContent') {
+        }else if(id === '#rightUserContent') {
             rOrL = 'right';
         }
 

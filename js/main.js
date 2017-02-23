@@ -27,18 +27,37 @@
     UI.init_my_buttons();
     */
 
+    var my_id = 0;
+    var arr = [
+        [1,2],
+        [2,0],
+        [0,1]
+    ];
+
+    var ids = ['#rightUserContent','#leftUserContent'];
+
     for (var i = 0; i < 3; i++) {
         var player = new Player;
         player.name = "user" + i;
+        if(i !== my_id)  {
+            player.is_ai = true;
+        }
+
+        if(i === my_id) {
+            player.pokers_show_dom_id = '#myProfileContent';
+        }
+        else if(i === arr[my_id][0]){
+            player.pokers_show_dom_id = ids[0];
+        }
+        else {
+            player.pokers_show_dom_id = ids[1];
+        }
 
         game.join_player(i, player);
     }
 
     game.start();
-
-    var my_id = 0;
     game.get_landlord(my_id);
-
 
     UI.show_landlord_pokers(game.landlord_pokers);
 

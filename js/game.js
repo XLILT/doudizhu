@@ -6,7 +6,7 @@
  *  @version : 1.0
  *  @author : mxl
  *  @E-mail : xiaolongicx@gmail.com
- *  @date : 2016/5/17
+ *  @date : 2017/2/20
  *
  *  Revision Notes :
  */
@@ -27,6 +27,8 @@ Player.prototype.pokers = [];
 
 Player.prototype.is_ai = false;
 
+Player.prototype.pokers_show_dom_id = "";
+
 /**
  * [重置游戏状态]
  * @return {[type]} [description]
@@ -45,13 +47,26 @@ Player.prototype.on_play = function(index) {
         UI.activate_button(true);
     }
     else {
-        setTimeout(function(index) {
-            console.log("this is ai" + index + " playing pokers");
+        setTimeout(function(index, player) {
+            var selected_pokers = [];
+            if(player.is_ai) {
+                selected_pokers = ai.selecte_pokers(game, index);
+            }
 
-            game.play_pokers(index, []);
-        }, 1000, index);
+            game.play_pokers(index, selected_pokers);
+
+            // UI
+            if(selected_pokers.length > 0) {
+                // 更新牌数
+                UI.update_poker_num(game.players[index].pokers.length, index);
+
+                // 展示已经打出的牌
+                UI.show_played_pokers(selected_pokers, player.pokers_show_dom_id);
+            }
+
+        }, 1000, index, this);
     }
-}
+};
 
 /**
  * [游戏闭包]
